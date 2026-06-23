@@ -317,8 +317,7 @@ class PaymentServiceIT extends FacadeIT {
     subject.createPayment(apiKey, email, ORANGE_MONEY, pspPaymentId);
 
     var csv =
-        subject.buildPaymentsCsv(
-            appName, Instant.EPOCH, Instant.parse("9999-12-31T23:59:59Z"));
+        subject.buildPaymentsCsv(appName, Instant.EPOCH, Instant.parse("9999-12-31T23:59:59Z"));
     var lines = csv.split("\n");
 
     assertEquals(2, lines.length);
@@ -336,8 +335,7 @@ class PaymentServiceIT extends FacadeIT {
     var appName = app.getName();
 
     var csv =
-        subject.buildPaymentsCsv(
-            appName, Instant.EPOCH, Instant.parse("9999-12-31T23:59:59Z"));
+        subject.buildPaymentsCsv(appName, Instant.EPOCH, Instant.parse("9999-12-31T23:59:59Z"));
     var lines = csv.split("\n");
 
     assertEquals(1, lines.length);
@@ -352,14 +350,14 @@ class PaymentServiceIT extends FacadeIT {
     var email = randomEmail();
 
     var created = subject.createPayment(apiKey, email, ORANGE_MONEY, randomUUID().toString());
-    var succeeded = created.toBuilder()
-        .pspPayment(created.pspPayment().toBuilder().amount(5000).build())
-        .build();
+    var succeeded =
+        created.toBuilder()
+            .pspPayment(created.pspPayment().toBuilder().amount(5000).build())
+            .build();
     paymentRepository.save(succeeded);
 
     var csv =
-        subject.buildPaymentsCsv(
-            appName, Instant.EPOCH, Instant.parse("9999-12-31T23:59:59Z"));
+        subject.buildPaymentsCsv(appName, Instant.EPOCH, Instant.parse("9999-12-31T23:59:59Z"));
 
     assertTrue(csv.contains("Succ\u00e8s"));
     assertTrue(csv.contains("5000"));
@@ -373,14 +371,11 @@ class PaymentServiceIT extends FacadeIT {
     var email = randomEmail();
 
     var created = subject.createPayment(apiKey, email, ORANGE_MONEY, randomUUID().toString());
-    var failed = created.toBuilder()
-        .verificationAttemptNb(10)
-        .build();
+    var failed = created.toBuilder().verificationAttemptNb(10).build();
     paymentRepository.save(failed);
 
     var csv =
-        subject.buildPaymentsCsv(
-            appName, Instant.EPOCH, Instant.parse("9999-12-31T23:59:59Z"));
+        subject.buildPaymentsCsv(appName, Instant.EPOCH, Instant.parse("9999-12-31T23:59:59Z"));
 
     assertTrue(csv.contains("\u00c9chou\u00e9"));
   }
@@ -395,8 +390,7 @@ class PaymentServiceIT extends FacadeIT {
     subject.createPayment(apiKey, emailWithSemicolon, ORANGE_MONEY, randomUUID().toString());
 
     var csv =
-        subject.buildPaymentsCsv(
-            appName, Instant.EPOCH, Instant.parse("9999-12-31T23:59:59Z"));
+        subject.buildPaymentsCsv(appName, Instant.EPOCH, Instant.parse("9999-12-31T23:59:59Z"));
 
     assertTrue(csv.contains("\"test;special@cute.dev\""));
   }
@@ -411,8 +405,7 @@ class PaymentServiceIT extends FacadeIT {
     subject.createPayment(apiKey, email, ORANGE_MONEY, randomUUID().toString());
 
     var csv =
-        subject.buildPaymentsCsv(
-            appName, Instant.EPOCH, Instant.parse("9999-12-31T23:59:59Z"));
+        subject.buildPaymentsCsv(appName, Instant.EPOCH, Instant.parse("9999-12-31T23:59:59Z"));
     var lines = csv.split("\n");
     var columns = lines[1].split(";");
 
@@ -430,8 +423,7 @@ class PaymentServiceIT extends FacadeIT {
     subject.createPayment(apiKey, email, ORANGE_MONEY, randomUUID().toString());
 
     var csv =
-        subject.buildPaymentsCsv(
-            appName, Instant.EPOCH, Instant.parse("9999-12-31T23:59:59Z"));
+        subject.buildPaymentsCsv(appName, Instant.EPOCH, Instant.parse("9999-12-31T23:59:59Z"));
     var lines = csv.split("\n");
     var columns = lines[1].split(";");
 
