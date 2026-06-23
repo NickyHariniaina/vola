@@ -66,4 +66,11 @@ public class PaymentViewController {
     model.addAttribute("selectedEndDate", parsedEndDate);
     return "payments";
   }
+
+  private static LocalDate parseDate(String dateStr) {
+    if (dateStr == null || dateStr.isBlank()) {
+      return null;
+    }
+    return LocalDate.parse(dateStr);
+  }
 }
