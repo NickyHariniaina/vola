@@ -36,7 +36,7 @@ public class PaymentRepository {
   private final JApplicationRepository jApplicationRepository;
 
   public Payment createPayment(
-      String apiKey, String payerEmail, PspType pspType, String pspPaymentId) {
+      String apiKey, String payerEmail, PspType pspType, String pspPaymentId, String scope) {
     var existing = jPaymentRepository.findByPspTypeAndPspPaymentId(pspType, pspPaymentId);
     if (existing.isPresent()) {
       throw new IllegalArgumentException(
@@ -67,6 +67,7 @@ public class PaymentRepository {
             millisNow(),
             null,
             0,
+            scope,
             jUserSaved,
             jApplication);
     var savedJPayment = jPaymentRepository.save(toSaveJPayment);
@@ -112,6 +113,7 @@ public class PaymentRepository {
               millisNow(),
               null,
               0,
+              null,
               jUserSaved,
               jApplication);
       jPaymentsToSave.add(toSaveJPayment);
@@ -170,21 +172,22 @@ public class PaymentRepository {
   }
 
   public Page<Payment> findFilteredPage(
-      String applicationName, Instant start, Instant end, Pageable pageable) {
+      String applicationName, String scope, Instant start, Instant end, Pageable pageable) {
     return jPaymentRepository
-        .findFilteredPage(applicationName, start, end, pageable)
+        .findFilteredPage(applicationName, scope, start, end, pageable)
         .map(jPaymentMapper::toDomain);
   }
 
-  public long countFiltered(String applicationName, Instant start, Instant end) {
-    return jPaymentRepository.countFiltered(applicationName, start, end);
+  public long countFiltered(String applicationName, String scope, Instant start, Instant end) {
+    return jPaymentRepository.countFiltered(applicationName, scope, start, end);
   }
 
-  public long sumAmountForSucceeded(String applicationName, Instant start, Instant end) {
-    return jPaymentRepository.sumAmountForSucceeded(applicationName, start, end);
+  public long sumAmountForSucceeded(
+      String applicationName, String scope, Instant start, Instant end) {
+    return jPaymentRepository.sumAmountForSucceeded(applicationName, scope, start, end);
   }
 
-  public long countPending(String applicationName, Instant start, Instant end) {
-    return jPaymentRepository.countPending(applicationName, start, end);
+  public long countPending(String applicationName, String scope, Instant start, Instant end) {
+    return jPaymentRepository.countPending(applicationName, scope, start, end);
   }
 }
