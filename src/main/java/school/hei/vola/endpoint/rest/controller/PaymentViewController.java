@@ -1,14 +1,13 @@
 package school.hei.vola.endpoint.rest.controller;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.ZoneOffset;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import school.hei.vola.model.VerificationStatus;
 import school.hei.vola.repository.jpa.JApplicationRepository;
 import school.hei.vola.service.PaymentService;
 import school.hei.vola.service.utils.DateUtils;
@@ -25,13 +24,21 @@ public class PaymentViewController {
     return "redirect:/payments";
   }
 
+  private static final int PAGE_SIZE = 15;
+
   @GetMapping("/payments")
   public String paymentsPage(
       @RequestParam(required = false) String applicationName,
       @RequestParam(required = false) String startDate,
       @RequestParam(required = false) String endDate,
+      @RequestParam(defaultValue = "0") int page,
       Model model) {
     model.addAttribute("applications", jApplicationRepository.findAll());
+
+    var effectiveApp =
+        (applicationName == null || applicationName.isBlank() || "all".equals(applicationName))
+            ? null
+            : applicationName;
 
     var parsedStartDate = DateUtils.parseDate(startDate);
     var parsedEndDate = DateUtils.parseDate(endDate);
@@ -45,32 +52,23 @@ public class PaymentViewController {
             ? parsedEndDate.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant()
             : Instant.parse("9999-12-31T23:59:59Z");
 
-    var payments =
-        paymentService.findPaymentsByApplicationNameAndDateRange(applicationName, start, end);
+    var totalAmount = paymentService.sumAmountForSucceeded(effectiveApp, start, end);
+    var pendingCount = paymentService.countPending(effectiveApp, start, end);
+    var totalCount = paymentService.countFiltered(effectiveApp, start, end);
 
-    var totalAmount =
-        payments.stream()
-            .filter(p -> p.getVerificationStatus() == VerificationStatus.SUCCEEDED)
-            .mapToLong(p -> p.pspPayment().amount() != null ? p.pspPayment().amount() : 0)
-            .sum();
+    var paymentsPage =
+        paymentService.findFilteredPage(effectiveApp, start, end, PageRequest.of(page, PAGE_SIZE));
 
-    model.addAttribute("payments", payments);
+    model.addAttribute("payments", paymentsPage.getContent());
     model.addAttribute("totalCollected", String.format("%,d Ar", totalAmount));
-    model.addAttribute(
-        "pendingCount",
-        payments.stream()
-            .filter(p -> p.getVerificationStatus() == VerificationStatus.VERIFYING)
-            .count());
-    model.addAttribute("selectedApplication", applicationName);
+    model.addAttribute("pendingCount", pendingCount);
+    model.addAttribute("totalCount", totalCount);
+    model.addAttribute("currentPage", page);
+    model.addAttribute("totalPages", paymentsPage.getTotalPages());
+    model.addAttribute("pageSize", PAGE_SIZE);
+    model.addAttribute("selectedApplication", effectiveApp);
     model.addAttribute("selectedStartDate", parsedStartDate);
     model.addAttribute("selectedEndDate", parsedEndDate);
     return "payments";
-  }
-
-  private static LocalDate parseDate(String dateStr) {
-    if (dateStr == null || dateStr.isBlank()) {
-      return null;
-    }
-    return LocalDate.parse(dateStr);
   }
 }
