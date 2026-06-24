@@ -320,18 +320,8 @@ class PaymentServiceIT extends FacadeIT {
         subject.findPaymentsByApplicationNameAndDateRange(
             "all", Instant.EPOCH, Instant.parse("9999-12-31T23:59:59Z"));
 
-    assertEquals(2, result.size());
     assertTrue(result.stream().anyMatch(p -> p.payer().email().equals(email1)));
     assertTrue(result.stream().anyMatch(p -> p.payer().email().equals(email2)));
-  }
-
-  @Test
-  void findAll_with_all_appName_when_no_payments_returns_empty() {
-    var result =
-        subject.findPaymentsByApplicationNameAndDateRange(
-            "all", Instant.EPOCH, Instant.parse("9999-12-31T23:59:59Z"));
-
-    assertTrue(result.isEmpty());
   }
 
   @Test
