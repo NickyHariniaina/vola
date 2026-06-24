@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,7 +58,11 @@ public class PaymentViewController {
     var totalCount = paymentService.countFiltered(effectiveApp, start, end);
 
     var paymentsPage =
-        paymentService.findFilteredPage(effectiveApp, start, end, PageRequest.of(page, PAGE_SIZE));
+        paymentService.findFilteredPage(
+            effectiveApp,
+            start,
+            end,
+            PageRequest.of(page, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "creationInstant")));
 
     model.addAttribute("payments", paymentsPage.getContent());
     model.addAttribute("totalCollected", String.format("%,d Ar", totalAmount));
