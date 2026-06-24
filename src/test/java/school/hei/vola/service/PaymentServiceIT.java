@@ -320,6 +320,7 @@ class PaymentServiceIT extends FacadeIT {
         subject.findPaymentsByApplicationNameAndDateRange(
             "all", Instant.EPOCH, Instant.parse("9999-12-31T23:59:59Z"));
 
+    assertTrue(result.size() >= 2);
     assertTrue(result.stream().anyMatch(p -> p.payer().email().equals(email1)));
     assertTrue(result.stream().anyMatch(p -> p.payer().email().equals(email2)));
   }
