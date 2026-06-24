@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import school.hei.vola.repository.jpa.JApplicationRepository;
 import school.hei.vola.service.PaymentService;
-import school.hei.vola.service.utils.DateUtils;
+import school.hei.vola.service.utils.DateParser;
 
 @Controller
 @RequiredArgsConstructor
@@ -41,8 +41,8 @@ public class PaymentViewController {
             ? null
             : applicationName;
 
-    var parsedStartDate = DateUtils.parseDate(startDate);
-    var parsedEndDate = DateUtils.parseDate(endDate);
+    var parsedStartDate = DateParser.parseDate(startDate);
+    var parsedEndDate = DateParser.parseDate(endDate);
 
     var start =
         parsedStartDate != null
