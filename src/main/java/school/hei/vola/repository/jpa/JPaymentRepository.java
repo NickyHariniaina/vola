@@ -25,44 +25,54 @@ public interface JPaymentRepository extends JpaRepository<JPayment, String> {
 
   @Query(
       "SELECT p FROM JPayment p WHERE (:applicationName IS NULL OR p.application.name ="
-          + " :applicationName) AND p.creationInstant >= :start AND p.creationInstant < :end")
+          + " :applicationName) AND (:scope IS NULL OR p.scope = :scope) AND p.creationInstant"
+          + " >= :start AND p.creationInstant < :end")
   List<JPayment> findByApplicationNameAndCreationInstantBetween(
       @Param("applicationName") String applicationName,
+      @Param("scope") String scope,
       @Param("start") Instant start,
       @Param("end") Instant end);
 
   @Query(
       "SELECT p FROM JPayment p WHERE (:applicationName IS NULL OR p.application.name ="
-          + " :applicationName) AND p.creationInstant >= :start AND p.creationInstant < :end")
+          + " :applicationName) AND (:scope IS NULL OR p.scope = :scope) AND p.creationInstant"
+          + " >= :start AND p.creationInstant < :end")
   Page<JPayment> findFilteredPage(
       @Param("applicationName") String applicationName,
+      @Param("scope") String scope,
       @Param("start") Instant start,
       @Param("end") Instant end,
       Pageable pageable);
 
   @Query(
       "SELECT COUNT(p) FROM JPayment p WHERE (:applicationName IS NULL OR p.application.name ="
-          + " :applicationName) AND p.creationInstant >= :start AND p.creationInstant < :end")
+          + " :applicationName) AND (:scope IS NULL OR p.scope = :scope) AND p.creationInstant"
+          + " >= :start AND p.creationInstant < :end")
   long countFiltered(
       @Param("applicationName") String applicationName,
+      @Param("scope") String scope,
       @Param("start") Instant start,
       @Param("end") Instant end);
 
   @Query(
       "SELECT COALESCE(SUM(p.amount), 0) FROM JPayment p WHERE (:applicationName IS NULL OR"
-          + " p.application.name = :applicationName) AND p.creationInstant >= :start AND"
-          + " p.creationInstant < :end AND p.amount IS NOT NULL")
+          + " p.application.name = :applicationName) AND (:scope IS NULL OR p.scope = :scope)"
+          + " AND p.creationInstant >= :start AND p.creationInstant < :end AND p.amount IS NOT"
+          + " NULL")
   long sumAmountForSucceeded(
       @Param("applicationName") String applicationName,
+      @Param("scope") String scope,
       @Param("start") Instant start,
       @Param("end") Instant end);
 
   @Query(
       "SELECT COUNT(p) FROM JPayment p WHERE (:applicationName IS NULL OR p.application.name ="
-          + " :applicationName) AND p.creationInstant >= :start AND p.creationInstant < :end AND"
-          + " p.amount IS NULL AND p.verificationAttemptNb <= 5")
+          + " :applicationName) AND (:scope IS NULL OR p.scope = :scope) AND p.creationInstant"
+          + " >= :start AND p.creationInstant < :end AND p.amount IS NULL AND"
+          + " p.verificationAttemptNb <= 5")
   long countPending(
       @Param("applicationName") String applicationName,
+      @Param("scope") String scope,
       @Param("start") Instant start,
       @Param("end") Instant end);
 }

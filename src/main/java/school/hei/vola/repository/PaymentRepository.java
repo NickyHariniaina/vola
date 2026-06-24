@@ -163,9 +163,9 @@ public class PaymentRepository {
   }
 
   public List<Payment> findByApplicationNameAndDateRange(
-      String applicationName, Instant start, Instant end) {
+      String applicationName, String scope, Instant start, Instant end) {
     return jPaymentRepository
-        .findByApplicationNameAndCreationInstantBetween(applicationName, start, end)
+        .findByApplicationNameAndCreationInstantBetween(applicationName, scope, start, end)
         .stream()
         .map(jPaymentMapper::toDomain)
         .toList();
