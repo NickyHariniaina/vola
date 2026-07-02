@@ -190,4 +190,8 @@ public class PaymentRepository {
   public long countPending(String applicationName, String scope, Instant start, Instant end) {
     return jPaymentRepository.countPending(applicationName, scope, start, end);
   }
+
+  public List<String> findDistinctScopes(String applicationName) {
+    return jPaymentRepository.findDistinctScopes(applicationName);
+  }
 }

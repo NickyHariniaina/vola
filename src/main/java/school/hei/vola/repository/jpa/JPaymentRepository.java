@@ -75,4 +75,9 @@ public interface JPaymentRepository extends JpaRepository<JPayment, String> {
       @Param("scope") String scope,
       @Param("start") Instant start,
       @Param("end") Instant end);
+
+  @Query(
+      "SELECT DISTINCT p.scope FROM JPayment p WHERE (:applicationName IS NULL OR p.application.name"
+          + " = :applicationName) AND p.scope IS NOT NULL AND p.scope <> ''")
+  List<String> findDistinctScopes(@Param("applicationName") String applicationName);
 }
