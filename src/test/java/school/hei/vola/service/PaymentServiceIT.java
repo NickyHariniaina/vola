@@ -27,7 +27,6 @@ import school.hei.vola.conf.FacadeIT;
 import school.hei.vola.endpoint.event.EventProducer;
 import school.hei.vola.endpoint.event.model.PaymentVerificationRequested;
 import school.hei.vola.model.PaymentInfo;
-import school.hei.vola.repository.PaymentRepository;
 import school.hei.vola.repository.jpa.JApplicationRepository;
 import school.hei.vola.repository.jpa.model.JApplication;
 
@@ -36,7 +35,6 @@ class PaymentServiceIT extends FacadeIT {
   @Autowired PaymentService subject;
   @MockBean EventProducer eventProducerMocked;
   @Autowired JApplicationRepository jApplicationRepository;
-  @Autowired PaymentRepository paymentRepository;
 
   @Captor ArgumentCaptor<List<PaymentVerificationRequested>> eventCaptor;
 

@@ -273,8 +273,8 @@ class PaymentControllerIT extends FacadeIT {
             .build());
 
     var response = subject.exportPaymentsCsv(null, null, null, null);
-      assertNotNull(response.getBody());
-      var csv = new String(response.getBody(), StandardCharsets.UTF_8);
+    assertNotNull(response.getBody());
+    var csv = new String(response.getBody(), StandardCharsets.UTF_8);
 
     assertEquals(200, response.getStatusCodeValue());
     assertEquals(readResource(), csv);
@@ -290,8 +290,8 @@ class PaymentControllerIT extends FacadeIT {
     jApplicationRepository.save(app);
 
     var response = subject.exportPaymentsCsv("EmptyApp", null, null, null);
-      assertNotNull(response.getBody());
-      var csv = new String(response.getBody(), StandardCharsets.UTF_8);
+    assertNotNull(response.getBody());
+    var csv = new String(response.getBody(), StandardCharsets.UTF_8);
 
     assertEquals(200, response.getStatusCodeValue());
     assertEquals(
